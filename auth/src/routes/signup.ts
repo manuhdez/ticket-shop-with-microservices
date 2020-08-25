@@ -3,6 +3,8 @@ import { validationResult } from 'express-validator';
 
 // middlewares
 import { signupValidation } from '../middlewares/signupValidation';
+import { RequestValidationError } from '../errors/RequestValidationError';
+import { DatabaseConnectionError } from '../errors/DatabaseConnectionError';
 
 const router = Router();
 
@@ -13,7 +15,7 @@ router.post(
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-      return res.status(400).json(errors.array());
+      throw new RequestValidationError(errors.array());
     }
 
     const { email, password } = req.body;
