@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import dotenv from 'dotenv';
 
 // routes
@@ -9,6 +10,7 @@ import { signupRouter } from './routes/signup';
 
 // middlewares
 import errorHandler from './middlewares/error-handler';
+import NotFoundError from './errors/NotFoundError';
 
 const app = express();
 
@@ -20,6 +22,10 @@ app.use(signupRouter);
 app.use(signinRouter);
 app.use(signoutRouter);
 app.use(currentUserRouter);
+
+app.all('*', async () => {
+  throw new NotFoundError();
+});
 
 // error handling
 app.use(errorHandler);
