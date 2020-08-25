@@ -1,5 +1,6 @@
 import express from 'express';
 import 'express-async-errors';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 // routes
@@ -30,7 +31,23 @@ app.all('*', async () => {
 // error handling
 app.use(errorHandler);
 
-const port = process.env.PORT;
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+const start = async () => {
+  try {
+    await mongoose.connect(process.env.DB_URL as string, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    });
+
+    console.log('Database successfully conected.');
+  } catch (e) {
+    console.log(e);
+  }
+
+  const port = process.env.PORT;
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}`);
+  });
+};
+
+start();
