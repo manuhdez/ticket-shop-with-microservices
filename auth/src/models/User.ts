@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Password from '../tools/Password';
 
 // Describes the data needed to create a new user
 interface UserData {
@@ -26,6 +27,17 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+// mongoose middleware fns
+userSchema.pre('save', async function (done) {
+  if (this.isModified('password')) {
+    const hashed = await Password.toHash(this.get('password') as string);
+    this.set('password', hashed);
+  }
+
+  done();
+});
+
+// mongoose static methods
 userSchema.statics.createUser = (data: UserData) => {
   return new User(data);
 };
