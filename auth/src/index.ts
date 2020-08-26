@@ -2,6 +2,7 @@ import express from 'express';
 import 'express-async-errors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cookieSession from 'cookie-session';
 
 // routes
 import { currentUserRouter } from './routes/current-user';
@@ -15,8 +16,16 @@ import NotFoundError from './errors/NotFoundError';
 
 const app = express();
 
+app.set('trust proxy', true);
+
 dotenv.config();
 app.use(express.json());
+app.use(
+  cookieSession({
+    signed: false,
+    secure: true,
+  })
+);
 
 // route registry
 app.use(signupRouter);
