@@ -15,17 +15,30 @@ interface UserModel extends mongoose.Model<UserDocument> {
 // Describes the properties the User document has
 interface UserDocument extends mongoose.Document, UserData {}
 
-const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    unique: true,
-    required: true,
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    toJSON: {
+      transform: (doc: UserDocument, ret: UserDocument) => {
+        delete ret.password;
+        delete ret._id;
+        delete ret.__v;
+
+        ret.id = doc._id;
+      },
+    },
+  }
+);
 
 // mongoose middleware fns
 userSchema.pre('save', async function (done) {
