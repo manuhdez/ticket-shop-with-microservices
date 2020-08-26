@@ -1,17 +1,19 @@
 import { Router, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 
+import { User } from '../models/User';
+
 // middlewares
 import { signupValidation } from '../middlewares/signupValidation';
 import { RequestValidationError } from '../errors/RequestValidationError';
-import { DatabaseConnectionError } from '../errors/DatabaseConnectionError';
+import DatabaseException from '../errors/DatabaseException';
 
 const router = Router();
 
 router.post(
   '/api/users/signup',
   signupValidation,
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -20,7 +22,13 @@ router.post(
 
     const { email, password } = req.body;
 
-    res.status(200).json({ email, password });
+    try {
+      const user = User.createUser({ email, password });
+      await user.save();
+      return res.status(201).json({ user });
+    } catch (e) {
+      throw new DatabaseException(e.message);
+    }
   }
 );
 

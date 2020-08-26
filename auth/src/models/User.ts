@@ -17,6 +17,7 @@ interface UserDocument extends mongoose.Document, UserData {}
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
+    unique: true,
     required: true,
   },
   password: {
@@ -25,8 +26,8 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-export const User = mongoose.model<UserDocument, UserModel>('User', userSchema);
-
 userSchema.statics.createUser = (data: UserData) => {
   return new User(data);
 };
+
+export const User = mongoose.model<UserDocument, UserModel>('User', userSchema);
