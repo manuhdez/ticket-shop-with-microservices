@@ -29,7 +29,7 @@ router.post(
 
       // Generate a jwt token
       const payload = { id: user.id, email };
-      const token = jwt.sign(payload, 'auth-ticket-secret-key', {
+      const token = jwt.sign(payload, process.env.JWT_KEY!, {
         expiresIn: '15min',
       });
 

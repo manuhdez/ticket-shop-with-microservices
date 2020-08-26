@@ -14,7 +14,11 @@ import { signupRouter } from './routes/signup';
 import errorHandler from './middlewares/error-handler';
 import NotFoundError from './errors/NotFoundError';
 
+// tools
+import { Environment } from './tools/Environment';
+
 const app = express();
+const environment = new Environment();
 
 app.set('trust proxy', true);
 
@@ -42,21 +46,22 @@ app.use(errorHandler);
 
 const start = async () => {
   try {
-    await mongoose.connect(process.env.DB_URL as string, {
+    environment.checkVariables();
+
+    await mongoose.connect(process.env.DB_URL!, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
-
     console.log('Database successfully conected.');
+
+    const port = process.env.PORT!;
+    app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
   } catch (e) {
     console.log(e);
   }
-
-  const port = process.env.PORT;
-  app.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
-  });
 };
 
 start();

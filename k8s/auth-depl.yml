@@ -19,7 +19,12 @@ spec:
             - name: PORT
               value: "3000"
             - name: DB_URL
-              value: DB_URL=mongodb://auth-mongo-srv:27017/auth
+              value: mongodb://auth-mongo-srv:27017/auth
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
 ---
 apiVersion: v1
 kind: Service
